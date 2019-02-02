@@ -7,6 +7,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "minimist": "^1.2.0",
     "prettier-hook": "^0.2.0"
   },
   "devDependencies": {

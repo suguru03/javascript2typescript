@@ -1,1 +1,1 @@
-export * from 'Ast';
+export * from './Ast';

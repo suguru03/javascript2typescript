@@ -1,5 +1,7 @@
 // TODO: move to prettier-hooktype AstResolver = (node: any, key: any, ast?: Ast) => any;
 
+type AstResolver = (node: any, key: any, ast?: Ast) => any;
+
 interface ResolverMap {
   [targetType: string]: AstResolver;
 }

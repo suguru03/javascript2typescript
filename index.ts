@@ -5,6 +5,7 @@ import { Ast } from './lib';
 addHook(parse);
 
 function parse(ast) {
+  console.log(require('util').inspect(ast, false, null));
   new Ast().set('MethodDefinition', resolveJavaScript).resolveAst(ast);
   return ast;
 }
