@@ -1,8 +1,8 @@
 {
-  "name": "j2t",
+  "name": "javascript2typescript",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:suguru03/j2t.git",
+  "repository": "git@github.com:suguru03/javascript2typescript.git",
   "author": "Suguru Motegi <suguru.motegi@gmail.com>",
   "license": "MIT",
   "private": true,

@@ -11,5 +11,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "example"]
+  "exclude": ["node_modules",
+    "examples"
+  ]
 }
