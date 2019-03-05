@@ -1,4 +1,4 @@
-import * as module from './module';
-import * as string from './string';
+import * as modules from './modules';
+import * as strings from './strings';
 
-export { module, string };
+export { modules, strings };

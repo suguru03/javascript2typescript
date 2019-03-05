@@ -1,17 +1,11 @@
 import { Ast, hooks } from 'prettier-hook';
 
-import { string, module } from './lib';
+import { strings, modules } from './lib';
 
 function parse(ast) {
-  new Ast().set('VariableDeclaration', resolve).resolveAst(ast);
-  // modify AST
+  strings.resolve(ast);
+  modules.resolve(ast);
   return ast;
 }
 
 hooks.babylon.addHook(parse);
-
-export function resolve(node, key) {
-  string.resolve(node, key);
-  module.resolve(node, key);
-  return true;
-}

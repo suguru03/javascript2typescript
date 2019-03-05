@@ -6,12 +6,9 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,
+    "declaration": true,
     "noImplicitReturns": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules",
-    "examples"
-  ]
+  "exclude": ["node_modules", "examples", "dist"]
 }
