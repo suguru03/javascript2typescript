@@ -1,6 +1,10 @@
 import { Ast } from 'prettier-hook';
 
 export function resolve(node) {
+  resolveImport(node);
+}
+
+function resolveImport(node) {
   new Ast()
     .set('ExpressionStatement', (node, key, ast) => {
       if (!ast.super(node, key)) {
@@ -22,6 +26,23 @@ export function resolve(node) {
       const declarator = ast.super(node, key);
       if (!declarator) {
         return false;
+      }
+      /*
+       * cosnt { resolve } = require('path');
+       * ↓
+       * import { resolve } from 'path';
+       */
+      if (declarator.id.type === 'ObjectPattern') {
+        node.splice(key, 1, {
+          type: 'ImportDeclaration',
+          specifiers: declarator.id.properties.map(prop => ({
+            type: 'ImportSpecifier',
+            imported: prop
+          })),
+          importKind: null,
+          source: declarator.init.arguments[0]
+        });
+        return true;
       }
       /*
        * cosnt test = require('fs');
