@@ -1,5 +1,7 @@
 # javascript2typescript
 
+⚠ Experimental ⚠ 
+
 Convert JavaScript files to TypeScript files
 
 ## Develop

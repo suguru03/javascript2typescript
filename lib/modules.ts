@@ -98,37 +98,88 @@ function resolveImport(node) {
 
 function resolveExportDefault(node) {
   console.log(JSON.stringify(node, null, 2));
-  /*
-   * module.exports = {};
-   * ↓
-   * export default {};
-   */
+  const map = {
+    default: 'default',
+    named: 'named'
+  };
   new Ast()
     .set('ExpressionStatement', (node, key, ast) => {
-      if (!ast.super(node, key)) {
-        return false;
+      const tree = node[key];
+      switch (ast.super(node, key)) {
+        /*
+         * module.exports = {};
+         * ↓
+         * export default {};
+         */
+        case map.default:
+          node.splice(key, 1, {
+            type: 'ExportDefaultDeclaration',
+            declaration: tree.expression.right
+          });
+          break;
+        case map.named:
+          /*
+           * const test = {};
+           * exports.test = test;
+           * ↓
+           * export { test };
+           */
+          if (tree.expression.left.property.name === tree.expression.right.name) {
+            node.splice(key, 1, {
+              type: 'ExportNamedDeclaration',
+              specifiers: [
+                {
+                  type: 'ExportSpecifier',
+                  local: tree.expression.right,
+                  exported: tree.expression.right
+                }
+              ],
+              source: null,
+              exportKind: 'value'
+            });
+            break;
+          }
+          /*
+           * exports.test = { a: 1 };
+           * ↓
+           * export const test = { a: 1 };
+           */
+          node.splice(key, 1, {
+            type: 'ExportNamedDeclaration',
+            specifiers: [],
+            source: null,
+            declaration: {
+              type: 'VariableDeclaration',
+              declarations: [
+                {
+                  type: 'VariableDeclarator',
+                  id: tree.expression.left.property,
+                  init: tree.expression.right
+                }
+              ],
+              kind: 'const'
+            },
+            exportKind: 'value'
+          });
+          break;
+        default:
+          return false;
       }
-      node.splice(key, 1, {
-        type: 'ExportDefaultDeclaration',
-        declaration: node[key].expression.right
-      });
+      console.log(require('util').inspect(node[key], false, null));
       return true;
     })
-    .set('AssignmentExpression', (node, key, ast) => {
-      const { operator, left, right } = node[key];
-      if (
-        operator === '=' &&
-        get(left, ['object', 'name']) === 'module' &&
-        get(left, ['property', 'name']) === 'exports'
-      ) {
-        return true;
+    .set(
+      'AssignmentExpression',
+      (node, key, ast): any => {
+        const { left } = node[key];
+        if (get(left, ['object', 'name']) === 'module' && get(left, ['property', 'name']) === 'exports') {
+          return map.default;
+        }
+        if (get(left, ['object', 'name']) === 'exports' && get(left, ['property', 'name'])) {
+          return map.named;
+        }
+        return ast.super(node, key);
       }
-      return ast.super(node, key);
-    })
+    )
     .resolveAst(node);
-  /*
-   * exports.test = { a: 1 };
-   * ↓
-   * export const test = { a: 1 };
-   */
 }
