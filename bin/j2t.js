@@ -3,10 +3,13 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const cp = require('child_process');
 
+const Aigle = require('aigle');
+const glob = require('glob');
 const minimist = require('minimist');
 
+const exec = Aigle.promisify(cp.exec);
 const args = minimist(process.argv.slice(2));
 const { out } = args;
 
@@ -21,12 +24,17 @@ const hookpath = [
   path.resolve(__dirname, '../node_modules/prettier-hook/bin/prettier-hook.js')
 ].find(fs.existsSync);
 
-const command = `${hookpath} --require ${indexpath} ${args._}`;
-const res = execSync(command).toString();
+const files = glob.sync(`${args._}/**`).filter(file => /.js$/.test(file));
 
-if (!out) {
-  console.log(res);
-}
-if (out) {
-  fs.writeFileSync(out, res);
-}
+Aigle.eachLimit(files, async file => {
+  const command = `${hookpath} --require ${indexpath} ${file}`;
+  const { stdout } = await exec(command);
+  if (!out) {
+    console.log(stdout);
+    return;
+  }
+  const filepath = file.replace(/.js$/, '.ts');
+  if (out) {
+    fs.writeFileSync(filepath, stdout);
+  }
+});

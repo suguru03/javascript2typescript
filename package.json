@@ -7,6 +7,8 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "aigle": "^1.13.0",
+    "glob": "^7.1.3",
     "minimist": "^1.2.0",
     "prettier-hook": "^0.2.0"
   },

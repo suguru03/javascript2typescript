@@ -1,10 +1,21 @@
+'use strict';
+
+require('fs');
+const path = require('path');
+const { resolve } = require('path');
+const join = require('path').join;
+
+const func = () => {};
+
 class Test {
   constructor() {
-    this.a = null;
     this.a = 1;
   }
-  static get() {
-    this.a = 'a';
+  get() {
     return this.a;
   }
 }
+
+exports.func = func;
+exports.func1 = () => 1;
+module.exports = new Test();

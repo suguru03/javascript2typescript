@@ -3,7 +3,6 @@ import { Ast } from 'prettier-hook';
 import { get } from './util';
 
 export function resolve(node) {
-  console.log(JSON.stringify(node, null, 2));
   new Ast().set('ClassDeclaration', resolveInstanceVariables).resolveAst(node);
 }
 
