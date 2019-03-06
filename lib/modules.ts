@@ -54,7 +54,6 @@ function resolveImport(node) {
        * import { join as join2 } from 'fs';
        */
       if (declarator.init.property) {
-        console.log(JSON.stringify(declarator.init, null, 2));
         node.splice(key, 1, {
           type: 'ImportDeclaration',
           specifiers: [
@@ -97,7 +96,6 @@ function resolveImport(node) {
 }
 
 function resolveExportDefault(node) {
-  console.log(JSON.stringify(node, null, 2));
   const map = {
     default: 'default',
     named: 'named'
@@ -165,7 +163,6 @@ function resolveExportDefault(node) {
         default:
           return false;
       }
-      console.log(require('util').inspect(node[key], false, null));
       return true;
     })
     .set(
