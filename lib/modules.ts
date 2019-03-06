@@ -71,13 +71,13 @@ function resolveImport(node) {
       /*
        * cosnt test = require('path');
        * ↓
-       * import * as test from 'path';
+       * import test from 'path';
        */
       node.splice(key, 1, {
         type: 'ImportDeclaration',
         specifiers: [
           {
-            type: 'ImportNamespaceSpecifier',
+            type: 'ImportDefaultSpecifier',
             local: declarator.id
           }
         ],

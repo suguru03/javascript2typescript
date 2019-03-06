@@ -11,7 +11,7 @@ const minimist = require('minimist');
 
 const exec = Aigle.promisify(cp.exec);
 const args = minimist(process.argv.slice(2));
-const { out } = args;
+const { out, rm } = args;
 
 const indexpath = [
   path.resolve(__dirname, '../index.js'),
@@ -27,8 +27,9 @@ const hookpath = [
 const files = glob.sync(`${args._}/**`).filter(file => /.js$/.test(file));
 
 Aigle.eachLimit(files, async file => {
+  console.log(`Converting... ${file}`);
   const command = `${hookpath} --require ${indexpath} ${file}`;
-  const { stdout } = await exec(command);
+  const { stdout } = await exec(command, { maxBuffer: Math.pow(1024, 3) });
   if (!out) {
     console.log(stdout);
     return;
@@ -37,4 +38,8 @@ Aigle.eachLimit(files, async file => {
   if (out) {
     fs.writeFileSync(filepath, stdout);
   }
+  if (rm) {
+    fs.unlinkSync(file);
+  }
+  console.log(`Converted... ${filepath}`);
 });
