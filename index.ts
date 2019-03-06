@@ -1,4 +1,4 @@
-import { Ast, hooks } from 'prettier-hook';
+import { hooks } from 'prettier-hook';
 
 import { classes, strings, modules } from './lib';
 

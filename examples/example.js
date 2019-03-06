@@ -4,7 +4,7 @@ require('fs');
 const path = require('path');
 const p = require('./path');
 const { resolve } = require('path');
-const join = require('path').join;
+const join = require('.path').join;
 
 const func = () => {};
 
