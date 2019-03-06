@@ -1,27 +1,10 @@
 import { Ast } from 'prettier-hook';
 
-import { get } from './util';
+import { Type, PropMap, getTypeAnnotation } from './types';
 
 export function resolve(node) {
   new Ast().set('ClassDeclaration', resolveInstanceVariables).resolveAst(node);
 }
-
-enum Type {
-  Number = 'number',
-  String = 'string',
-  Boolean = 'boolean',
-  Null = 'null',
-  Any = 'any'
-}
-const TypeAnnotationMap: Record<Type, string> = {
-  [Type.Number]: 'NumberTypeAnnotation',
-  [Type.String]: 'StringTypeAnnotation',
-  [Type.Boolean]: 'BooleanTypeAnnotation',
-  [Type.Null]: 'NullLiteralTypeAnnotation',
-  [Type.Any]: 'AnyTypeAnnotation'
-};
-
-type PropMap = Map<string, Set<Type>>;
 
 function resolveInstanceVariables(node, key) {
   const staticPropMap: PropMap = new Map();
@@ -39,10 +22,8 @@ function resolveInstanceVariables(node, key) {
       }
       const { left, right } = node[key];
       const { name } = left.property;
-      if (!propMap.has(name)) {
-        propMap.set(name, new Set());
-      }
-      const set = propMap.get(name);
+      const set = propMap.get(name) || new Set();
+      propMap.set(name, set);
       switch (right.type) {
         case 'NumericLiteral':
           set.add(Type.Number);
@@ -72,16 +53,7 @@ function resolveInstanceVariables(node, key) {
 
 function assignPropMap(node, propMap: PropMap, staticProperty: boolean) {
   const props: any[] = Array.from(propMap).map(([name, set]) => {
-    const types = Array.from(set).map(type => TypeAnnotationMap[type]);
-    const typeAnnotation =
-      types.length === 1
-        ? {
-            type: types[0]
-          }
-        : {
-            type: 'UnionTypeAnnotation',
-            types: types.map(type => ({ type }))
-          };
+    const typeAnnotation = getTypeAnnotation(set);
     return {
       type: 'ClassProperty',
       key: {
