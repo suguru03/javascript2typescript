@@ -1,6 +1,7 @@
 import { Ast } from 'prettier-hook';
 
 export function resolve(node) {
+  console.log(JSON.stringify(node, null, 2));
   resolveImport(node);
 }
 
@@ -39,15 +40,37 @@ function resolveImport(node) {
             type: 'ImportSpecifier',
             imported: prop
           })),
-          importKind: null,
           source: declarator.init.arguments[0]
         });
         return true;
       }
       /*
-       * cosnt test = require('fs');
+       * const join = require('path').join;
+       * const join2 = require('path').join;
        * ↓
-       * import * as test from 'fs';
+       * import { join } from 'fs';
+       * import { join as join2 } from 'fs';
+       */
+      if (declarator.init.property) {
+        console.log(JSON.stringify(declarator.init, null, 2));
+        node.splice(key, 1, {
+          type: 'ImportDeclaration',
+          specifiers: [
+            {
+              type: 'ImportSpecifier',
+              imported: declarator.init.property,
+              local: declarator.id
+            }
+          ],
+          source: declarator.init.object.arguments[0]
+        });
+        return true;
+      }
+
+      /*
+       * cosnt test = require('path');
+       * ↓
+       * import * as test from 'path';
        */
       node.splice(key, 1, {
         type: 'ImportDeclaration',
@@ -57,7 +80,6 @@ function resolveImport(node) {
             local: declarator.id
           }
         ],
-        importKind: 'value',
         source: declarator.init.arguments[0]
       });
       return true;
