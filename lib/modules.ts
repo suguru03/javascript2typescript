@@ -68,20 +68,24 @@ function resolveImport(node) {
         return true;
       }
 
+      const [source] = declarator.init.arguments;
+      const type = /^\./.test(source.value) ? 'ImportDefaultSpecifier' : 'ImportNamespaceSpecifier';
       /*
        * cosnt test = require('path');
+       * cosnt test = require('./path');
        * ↓
-       * import test from 'path';
+       * import * as test from 'path';
+       * import test from './path';
        */
       node.splice(key, 1, {
         type: 'ImportDeclaration',
         specifiers: [
           {
-            type: 'ImportDefaultSpecifier',
+            type,
             local: declarator.id
           }
         ],
-        source: declarator.init.arguments[0]
+        source
       });
       return true;
     })
