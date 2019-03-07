@@ -6,6 +6,7 @@ export function resolve(node) {
   resolveImport(node);
   resolveExportDefault(node);
 }
+const defaultList = (process.env.J2T_DEFAULT_EXPORT || '').split(',').map(str => new RegExp(str));
 
 // TODO: for now, it only supports top level imports, not support dynamic imports
 function resolveImport(node) {
@@ -94,13 +95,19 @@ function resolveImport(node) {
         }
 
         const [source] = declarator.init.arguments;
-        const type = /^\./.test(source.value) ? 'ImportDefaultSpecifier' : 'ImportNamespaceSpecifier';
+        const type = defaultList.find(re => re.test(source.value))
+          ? 'ImportDefaultSpecifier'
+          : 'ImportNamespaceSpecifier';
         /*
          * cosnt test = require('path');
          * cosnt test = require('./path');
          * ↓
          * import * as test from 'path';
          * import test from './path';
+         *
+         * with `-d` config,
+         * ex) ./bin/j2t.js example -d 'path';
+         * import test from 'path';
          */
         body.splice(idx, 1, {
           type: 'ImportDeclaration',

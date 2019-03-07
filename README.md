@@ -18,5 +18,5 @@ $ yarn add -D javascript2typescript prettier
 
 ```js
 $ yarn tsc -w
-$ node ./bin/j2t.js examples
+$ ./bin/j2t.js examples
 ```
