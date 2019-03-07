@@ -115,7 +115,7 @@ function resolveImport(node) {
         }
         return node[key];
       })
-      .set('Identifier', (node, key) => node[key].name === 'require')
+      .set('CallExpression', (node, key, ast) => get(node[key], ['callee', 'name']) === 'require')
       .resolveAst(body, idx);
   }
 }

@@ -5,17 +5,13 @@ const path = require('path');
 const p = require('./path');
 const { resolve } = require('path');
 const join = require('.path').join;
+require('fs')();
 
-const func = () => {};
-
-class Test {
-  constructor() {
-    this.a = 1;
-    const a = this.a;
-  }
-  get() {
-    return this.a;
-  }
+(() => {
+  require('./test');
+})();
+for (const num of [1, 2, 3]) {
+  require(num);
 }
 
 exports.func = func;

@@ -1,19 +1,9 @@
 class Test {
   constructor() {
-    this.a = {};
-    this.setup();
+    this.a = 1;
+    const a = this.a;
   }
-
-  /**
-   *
-   * @private
-   */
-  setup() {
-    //setup aws and upload queues per index
-    _.each([{ id: 1 }], obj => {
-      this.queue[obj.id] = [];
-    });
+  get() {
+    return this.a;
   }
 }
-
-module.exports = CloudSearchService;

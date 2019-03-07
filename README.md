@@ -8,5 +8,5 @@ Convert JavaScript files to TypeScript files
 
 ```js
 $ yarn tsc -w
-$ node ./bin/j2t.js examples/example.js
+$ node ./bin/j2t.js examples
 ```
