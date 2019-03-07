@@ -17,7 +17,7 @@ class Test {
   /**
    * @param {boolean[]} bool
    */
-  static get(bool, a, b, c) {
+  get(bool, a, b, c) {
     return bool;
   }
 }

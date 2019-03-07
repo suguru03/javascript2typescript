@@ -1,6 +1,7 @@
 import { Ast } from 'prettier-hook';
 
 import { Type, PropMap, getTypeAnnotation } from './types';
+import { get } from './util';
 
 export function resolve(node) {
   new Ast().set('ClassDeclaration', resolveInstanceVariables).resolveAst(node);
@@ -17,11 +18,15 @@ function resolveInstanceVariables(node, key) {
       return ast.super(node, key);
     })
     .set('AssignmentExpression', (node, key, ast) => {
-      if (!ast.super(node, key)) {
+      const { left, right } = node[key];
+      if (!new Ast().set('ThisExpression', () => true).resolveAst(left)) {
         return false;
       }
-      const { left, right } = node[key];
-      const { name } = left.property;
+      const name = get(left, ['object', 'property', 'name']) || get(left, ['property', 'name']);
+      if (!name) {
+        console.error(JSON.stringify(left, null, 4));
+        throw new Error('name not found');
+      }
       const set = propMap.get(name) || new Set();
       propMap.set(name, set);
       switch (right.type) {
@@ -43,7 +48,6 @@ function resolveInstanceVariables(node, key) {
       }
       return true;
     })
-    .set('ThisExpression', () => true)
     .resolveAst(tree);
   tree.body = tree.body || { type: 'ClassBody', body: [] };
   assignPropMap(tree, instancePropMap, false);

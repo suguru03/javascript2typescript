@@ -32,11 +32,13 @@ Aigle.eachLimit(files, limit, async file => {
   console.log(`Converting... ${file}`);
   const command = `${hookpath} --require ${indexpath} ${file}`;
   const { stdout, stderr } = await exec(command, { maxBuffer: Math.pow(1024, 3) });
+  if (!out) {
+    console.log(stdout);
+  }
   if (stderr) {
     throw stderr;
   }
   if (!out) {
-    console.log(stdout);
     return;
   }
   const filepath = file.replace(/.js$/, '.ts');
