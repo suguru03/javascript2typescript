@@ -12,7 +12,7 @@ const minimist = require('minimist');
 
 const exec = Aigle.promisify(cp.exec);
 const args = minimist(process.argv.slice(2));
-const { out, rm, limit = os.cpus().length } = args;
+const { write, rm, limit = os.cpus().length } = args;
 const defaults = args.d || args.defaults;
 const defaultStr = Array.isArray(defaults) ? defaults.join(',') : defaults;
 
@@ -34,17 +34,17 @@ Aigle.eachLimit(files, limit, async file => {
   console.log(`Converting... ${file}`);
   const command = `J2T_DEFAULT_EXPORT=${defaultStr} ${hookpath} --require ${indexpath} ${file}`;
   const { stdout, stderr } = await exec(command, { maxBuffer: Math.pow(1024, 3) });
-  if (!out) {
+  if (!write) {
     console.log(stdout);
   }
   if (stderr) {
     throw stderr;
   }
-  if (!out) {
+  if (!write) {
     return;
   }
   const filepath = file.replace(/.js$/, '.ts');
-  if (out) {
+  if (write) {
     fs.writeFileSync(filepath, stdout);
   }
   if (rm) {

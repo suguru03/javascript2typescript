@@ -1,6 +1,6 @@
 import { Ast } from 'prettier-hook';
 
-import { Type, PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
+import { PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
 import { get } from './util';
 
 export function resolve(node) {
@@ -31,6 +31,20 @@ function resolveInstanceVariables(node, key) {
       return true;
     })
     .resolveAst(tree);
+
+  // remove getter/setter
+  new Ast()
+    .set('ClassMethod', (node, key) => {
+      const tree = node[key];
+      if (tree.kind !== 'get' && tree.kind !== 'set') {
+        return false;
+      }
+      propMap = tree.static ? staticPropMap : instancePropMap;
+      propMap.delete(tree.key.name);
+      return true;
+    })
+    .resolveAst(tree);
+
   tree.body = tree.body || { type: 'ClassBody', body: [] };
   assignPropMap(tree, instancePropMap, false);
   assignPropMap(tree, staticPropMap, true);

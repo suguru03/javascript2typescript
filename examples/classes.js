@@ -7,3 +7,17 @@ class Test {
     return this.a;
   }
 }
+
+class GetterSetter {
+  constructor() {
+    this.num = 0;
+  }
+
+  get num() {
+    return this.val;
+  }
+
+  set num(val) {
+    this.val = val;
+  }
+}
