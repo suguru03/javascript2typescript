@@ -3,7 +3,6 @@ import { Ast } from 'prettier-hook';
 import { Type, PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
 
 export function resolve(node) {
-  console.log(JSON.stringify(node, null, 2));
   resolveJsDoc(node);
 }
 

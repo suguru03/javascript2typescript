@@ -2,14 +2,14 @@ export enum Type {
   Number = 'number',
   String = 'string',
   Boolean = 'boolean',
-  Null = 'null',
+  // Null = 'null',
   Any = 'any'
 }
 export const TypeAnnotationMap: Record<Type, string> = {
   [Type.Number]: 'NumberTypeAnnotation',
   [Type.String]: 'StringTypeAnnotation',
   [Type.Boolean]: 'BooleanTypeAnnotation',
-  [Type.Null]: 'NullLiteralTypeAnnotation',
+  // [Type.Null]: 'NullLiteralTypeAnnotation',
   [Type.Any]: 'AnyTypeAnnotation'
 };
 
@@ -46,10 +46,10 @@ export function setTypeToPropMap(name: string, propMap: PropMap, type: string = 
     case 'BooleanLiteral':
       set.add(Type.Boolean);
       break;
-    case Type.Null:
-    case 'NullLiteral':
-      set.add(Type.Null);
-      break;
+    // case Type.Null:
+    // case 'NullLiteral':
+    //   set.add(Type.Null);
+    //   break;
     default:
       set.add(Type.Any);
       break;
