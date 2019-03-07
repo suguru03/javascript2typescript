@@ -46,7 +46,12 @@ function resolveImport(node) {
         return true;
       })
       .set('VariableDeclaration', (node, key, ast) => {
+        if (depth !== 0) {
+          return false;
+        }
+        depth++;
         const declarator = ast.super(node, key);
+        depth--;
         if (!declarator) {
           return false;
         }
