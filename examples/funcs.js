@@ -7,6 +7,14 @@ function func(key, num = 1, bool = false, unknown) {
   return { key, num, bool, unknown };
 }
 
+/**
+ * @param {number} [num]
+ * @returns {Object}
+ */
+function optional(num) {
+  return { num };
+}
+
 class Test {
   /**
    * @param {boolean[]} bool

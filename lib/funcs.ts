@@ -3,6 +3,7 @@ import { Ast } from 'prettier-hook';
 import { Type, PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
 
 export function resolve(node) {
+  console.log(JSON.stringify(node, null, 2));
   resolveJsDoc(node);
 }
 
@@ -26,6 +27,7 @@ function resolveArguments(node, key) {
     return false;
   }
   const paramMap: PropMap = new Map();
+  const optionalMap: Map<string, boolean> = new Map();
   if (leadingComments.length !== 0) {
     const [{ value }] = leadingComments;
     value
@@ -33,6 +35,12 @@ function resolveArguments(node, key) {
       .map(str => str.match(/@params?\s{(.+)}\s(.+)/))
       .filter(arr => !!arr)
       .forEach(([, typeStr, key]) => {
+        const arr = key.match(/^\[(.+)\]/);
+        const optional = !!arr;
+        if (optional) {
+          [, key] = arr;
+        }
+        optionalMap.set(key, optional);
         for (const type of typeStr.split('|')) {
           if (typeMap.has(type)) {
             setTypeToPropMap(key, paramMap, typeMap.get(type));
@@ -47,8 +55,10 @@ function resolveArguments(node, key) {
         setTypeToPropMap(left.name, paramMap, tree.right.type);
         tree = left;
       case 'Identifier':
-        const typeSet = paramMap.get(tree.name);
+        const { name } = tree;
+        const typeSet = paramMap.get(name);
         const typeAnnotation = getTypeAnnotation(typeSet);
+        tree.optional = optionalMap.get(name);
         tree.typeAnnotation = {
           type: 'TypeAnnotation',
           typeAnnotation
