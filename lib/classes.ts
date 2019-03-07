@@ -1,6 +1,6 @@
 import { Ast } from 'prettier-hook';
 
-import { Type, PropMap, getTypeAnnotation } from './types';
+import { Type, PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
 import { get } from './util';
 
 export function resolve(node) {
@@ -27,25 +27,7 @@ function resolveInstanceVariables(node, key) {
         console.error(JSON.stringify(left, null, 4));
         throw new Error('name not found');
       }
-      const set = propMap.get(name) || new Set();
-      propMap.set(name, set);
-      switch (right.type) {
-        case 'NumericLiteral':
-          set.add(Type.Number);
-          break;
-        case 'StringLiteral':
-          set.add(Type.String);
-          break;
-        case 'BooleanLiteral':
-          set.add(Type.Boolean);
-          break;
-        case 'NullLiteral':
-          set.add(Type.Null);
-          break;
-        default:
-          set.add(Type.Any);
-          break;
-      }
+      setTypeToPropMap(name, propMap, right.type);
       return true;
     })
     .resolveAst(tree);

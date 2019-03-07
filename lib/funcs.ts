@@ -1,6 +1,6 @@
 import { Ast } from 'prettier-hook';
 
-import { Type, PropMap, getTypeAnnotation } from './types';
+import { Type, PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
 
 export function resolve(node) {
   resolveJsDoc(node);
@@ -33,25 +33,28 @@ function resolveArguments(node, key) {
       .map(str => str.match(/@params?\s{(.+)}\s(.+)/))
       .filter(arr => !!arr)
       .forEach(([, typeStr, key]) => {
-        const set = paramMap.get(key) || new Set();
-        paramMap.set(key, set);
         for (const type of typeStr.split('|')) {
           if (typeMap.has(type)) {
-            set.add(typeMap.get(type));
+            setTypeToPropMap(key, paramMap, typeMap.get(type));
           }
         }
       });
   }
-  for (const tree of params) {
-    if (tree.type !== 'Identifier') {
-      continue;
+  for (let tree of params) {
+    switch (tree.type) {
+      case 'AssignmentPattern':
+        const { left } = tree;
+        setTypeToPropMap(left.name, paramMap, tree.right.type);
+        tree = left;
+      case 'Identifier':
+        const typeSet = paramMap.get(tree.name);
+        const typeAnnotation = getTypeAnnotation(typeSet);
+        tree.typeAnnotation = {
+          type: 'TypeAnnotation',
+          typeAnnotation
+        };
+        break;
     }
-    const typeSet = paramMap.get(tree.name);
-    const typeAnnotation = getTypeAnnotation(typeSet);
-    tree.typeAnnotation = {
-      type: 'TypeAnnotation',
-      typeAnnotation
-    };
   }
   return true;
 }

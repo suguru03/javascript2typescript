@@ -1,9 +1,10 @@
 /**
  * @param {string|number} key
+ * @param {string} num
  * @returns {Object}
  */
-function func(key, num) {
-  return { key };
+function func(key, num = 1, bool = false, unknown) {
+  return { key, num, bool, unknown };
 }
 
 class Test {

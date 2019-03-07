@@ -29,3 +29,29 @@ export function getTypeAnnotation(set: Set<Type> | null) {
       };
   }
 }
+
+export function setTypeToPropMap(name: string, propMap: PropMap, type: string = '') {
+  const set = propMap.get(name) || new Set();
+  propMap.set(name, set);
+  switch (type) {
+    case Type.Number:
+    case 'NumericLiteral':
+      set.add(Type.Number);
+      break;
+    case Type.String:
+    case 'StringLiteral':
+      set.add(Type.String);
+      break;
+    case Type.Boolean:
+    case 'BooleanLiteral':
+      set.add(Type.Boolean);
+      break;
+    case Type.Null:
+    case 'NullLiteral':
+      set.add(Type.Null);
+      break;
+    default:
+      set.add(Type.Any);
+      break;
+  }
+}
