@@ -1,6 +1,6 @@
 # javascript2typescript
 
-⚠ Experimental ⚠ 
+⚠ WIP ⚠ 
 
 Convert JavaScript files to TypeScript files
 

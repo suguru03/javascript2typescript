@@ -1,12 +1,11 @@
 import { hooks } from 'prettier-hook';
 
-import { classes, funcs, strings, modules } from './lib';
+import * as libs from './lib';
 
 function parse(ast) {
-  classes.resolve(ast);
-  funcs.resolve(ast);
-  strings.resolve(ast);
-  modules.resolve(ast);
+  for (const lib of Object.values(libs)) {
+    lib.resolve(ast);
+  }
   return ast;
 }
 
