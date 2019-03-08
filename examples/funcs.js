@@ -9,9 +9,10 @@ function func(key, num = 1, bool = false, unknown) {
 
 /**
  * @param {number} [num]
+ * @param {string} [str]
  * @returns {Object}
  */
-function optional(num) {
+function optional(num, str = 'str') {
   return { num };
 }
 

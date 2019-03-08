@@ -50,8 +50,11 @@ function resolveArguments(node, key) {
   for (let tree of params) {
     switch (tree.type) {
       case 'AssignmentPattern':
-        const { left } = tree;
+        const { left, right } = tree;
         setTypeToPropMap(left.name, paramMap, tree.right.type);
+        if (right) {
+          optionalMap.delete(left.name);
+        }
         tree = left;
       case 'Identifier':
         const { name } = tree;
