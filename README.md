@@ -1,10 +1,11 @@
 # javascript2typescript
 
-⚠ WIP ⚠ 
+The library helps to convert JavaScript to TypeScript.
 
-Convert JavaScript files to TypeScript files
 
 ## Install
+
+Prettier is a peer dependency, please install both dependencies.
 
 ```sh
 // npm
@@ -14,9 +15,9 @@ $ npm i -D javascript2typescript prettier
 $ yarn add -D javascript2typescript prettier
 ```
 
-## Develop
+## How to run
 
 ```js
-$ yarn tsc -w
-$ ./bin/j2t.js examples
+$ yarn tsc
+$ ./bin/j2t.js <dirname or javascript file name>
 ```
