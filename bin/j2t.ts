@@ -1,14 +1,12 @@
 #!/usr/bin/env node
-'use strict';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as cp from 'child_process';
+import * as os from 'os';
 
-const fs = require('fs');
-const path = require('path');
-const cp = require('child_process');
-const os = require('os');
-
-const Aigle = require('aigle');
-const glob = require('glob');
-const minimist = require('minimist');
+import Aigle from 'aigle';
+import * as glob from 'glob';
+import * as minimist from 'minimist';
 
 const exec = Aigle.promisify(cp.exec);
 const args = minimist(process.argv.slice(2));
@@ -16,19 +14,18 @@ const { write, rm, limit = os.cpus().length } = args;
 const defaults = args.d || args.defaults;
 const defaultStr = Array.isArray(defaults) ? defaults.join(',') : defaults;
 
-const indexpath = [
-  path.resolve(__dirname, '../index.js'),
-  // debug
-  path.resolve(__dirname, '../dist/index.js')
-].find(fs.existsSync);
+const indexpath = path.resolve(__dirname, '../index.js');
 const hookpath = [
   path.resolve(__dirname, '../../prettier-hook/bin/prettier-hook.js'),
   // debug
-  path.resolve(__dirname, '../node_modules/prettier-hook/bin/prettier-hook.js')
+  path.resolve(__dirname, '../../node_modules/prettier-hook/bin/prettier-hook.js')
 ].find(fs.existsSync);
+if (!hookpath) {
+  throw new Error('Hook path not found');
+}
 
 const arg = `${args._}`;
-const files = glob.sync(/.js$/.test(arg) ? arg : `${arg}/**`).filter(file => /.js$/.test(file));
+const files: string[] = glob.sync(/.js$/.test(arg) ? arg : `${arg}/**`).filter(file => /.js$/.test(file));
 
 Aigle.eachLimit(files, limit, async file => {
   console.log(`Converting... ${file}`);

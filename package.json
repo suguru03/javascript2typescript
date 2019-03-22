@@ -7,8 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsp build",
-    "publish:npm": "tsp publish"
+    "build": "tsp build"
   },
   "bin": {
     "j2t": "./bin/j2t.js"
@@ -17,7 +16,7 @@
     "aigle": "^1.13.0",
     "glob": "^7.1.3",
     "minimist": "^1.2.0",
-    "prettier-hook": "^0.4.0"
+    "prettier-hook": "^0.4.2"
   },
   "peerDependencies": {
     "prettier": ">= 1.13.7"
