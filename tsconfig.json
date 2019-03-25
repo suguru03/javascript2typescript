@@ -10,5 +10,5 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "examples", "dist"]
+  "exclude": ["node_modules", "examples", "dist", "test"]
 }

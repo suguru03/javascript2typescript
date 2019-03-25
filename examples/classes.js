@@ -10,7 +10,7 @@ class Test {
 
 class GetterSetter {
   constructor() {
-    this.num = 0;
+    this.num1 = 0;
   }
 
   get num() {
