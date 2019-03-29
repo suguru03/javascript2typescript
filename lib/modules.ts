@@ -9,6 +9,7 @@ export function resolve(node) {
 const defaultList = (process.env.J2T_DEFAULT_EXPORT || '').split(',').map(str => new RegExp(str));
 
 // TODO: for now, it only supports top level imports, not support dynamic imports
+// TODO: module.export => export = xxx
 function resolveImport(node) {
   const body = get(node, ['program', 'body']);
   if (!body) {
