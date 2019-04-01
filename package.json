@@ -1,6 +1,6 @@
 {
   "name": "javascript2typescript",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "index.js",
   "repository": "git@github.com:suguru03/javascript2typescript.git",
   "author": "Suguru Motegi <suguru.motegi@gmail.com>",
