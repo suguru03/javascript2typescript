@@ -1785,10 +1785,10 @@ prelude-ls@~1.1.2:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
   integrity sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
 
-prettier-hook@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/prettier-hook/-/prettier-hook-0.4.2.tgz#1021d23a935fe58e9d029a3fa23860f535c0085d"
-  integrity sha512-PKW7F/u94XdkJSSg/Wm8FzkbxUsHM7G2UeW9qcmj+lcoXIXDnxqzQGzOwQZLLGeKbvKdEUvy2DOJgXcgHDWJJg==
+prettier-hook@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/prettier-hook/-/prettier-hook-0.4.3.tgz#ffcd03ae00b9c6c2d7aaa5435853cec84de3bfd8"
+  integrity sha512-eKi+RWe1XWlX8xh6ZpadadcSbtVdWwwCeTsGuTlYeYXhGlnUQ7WT+zEGOeovbcSEGZZj3R8BnHTFoBKTSlBwmQ==
   dependencies:
     vm-agent "^0.5.7"
 
