@@ -8,20 +8,20 @@ The library helps to convert JavaScript to TypeScript.
 - migrate jsdoc into type definition
 
 
-## Install
-
-Prettier is a peer dependency, please install both dependencies.
-
-```sh
-// npm
-$ npm i -D javascript2typescript prettier
-
-// yarn
-$ yarn add -D javascript2typescript prettier
-```
-
 ## How to run
 
 ```js
-$ yarn j2t <dirpath or filepath>
+$ npx javascript2typescript <dirname or filename>
+
+// or
+
+$ npm install -D javascript2typescript
+$ npx j2t <dirname or filename>
+
+//or 
+
+$ yarn add -D javascript2typescript
+$ yarn j2t <dirname or filename>
 ```
+
+
