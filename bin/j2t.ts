@@ -15,11 +15,9 @@ const defaults = args.d || args.defaults;
 const defaultStr = Array.isArray(defaults) ? defaults.join(',') : defaults;
 
 const indexpath = path.resolve(__dirname, '../index.js');
-const hookpath = [
-  path.resolve(__dirname, '../../prettier-hook/bin/prettier-hook.js'),
-  // debug
-  path.resolve(__dirname, '../../node_modules/prettier-hook/bin/prettier-hook.js')
-].find(fs.existsSync);
+const hookpath = ['../..', '../node_modules', '../../node_modules']
+  .map(dirpath => path.resolve(__dirname, dirpath, 'prettier-hook/bin/prettier-hook.js'))
+  .find(fs.existsSync);
 if (!hookpath) {
   throw new Error('Hook path not found');
 }

@@ -10,7 +10,9 @@
     "build": "tsp build",
     "test": "mocha test/**/*.ts"
   },
-  "bin": "./bin/j2t.js",
+  "bin": {
+    "j2t": "./bin/j2t.js"
+  },
   "dependencies": {
     "aigle": "^1.13.0",
     "glob": "^7.1.3",
