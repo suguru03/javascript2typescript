@@ -1,6 +1,7 @@
 import { Ast } from 'prettier-hook';
 
 import { Type, PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
+import { types } from 'util';
 
 export function resolve(node) {
   resolveJsDoc(node);
@@ -12,7 +13,6 @@ for (const type of Object.values(Type)) {
   typeMap.set(type.slice(0, 1).toUpperCase() + type.slice(1), type);
 }
 
-// TODO: find a better parser
 function resolveJsDoc(node) {
   new Ast()
     .set('FunctionDeclaration', resolveArguments)

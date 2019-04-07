@@ -14,6 +14,7 @@ export const TypeAnnotationMap: Record<Type, string> = {
 };
 
 export type PropMap = Map<string, Set<Type>>;
+export type PropSymbolMap = Map<string, Set<Type> | Symbol>;
 
 export function getTypeAnnotation(set: Set<Type> | null) {
   const types = set ? Array.from(set).map(type => TypeAnnotationMap[type]) : [];
@@ -30,8 +31,12 @@ export function getTypeAnnotation(set: Set<Type> | null) {
   }
 }
 
-export function setTypeToPropMap(name: string, propMap: PropMap, type: string = '') {
+export function setTypeToPropMap(name: string, propMap: PropSymbolMap, type: string = '') {
   const set = propMap.get(name) || new Set();
+  // instanceof Symbol doesn't work on ts-node?
+  if (!(set instanceof Set)) {
+    return;
+  }
   propMap.set(name, set);
   switch (type) {
     case Type.Number:

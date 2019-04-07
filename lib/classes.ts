@@ -1,20 +1,23 @@
 import { Ast } from 'prettier-hook';
 
-import { PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
+import { PropSymbolMap, getTypeAnnotation, setTypeToPropMap } from './types';
 import { get } from './util';
 
 export function resolve(node) {
   new Ast().set('ClassDeclaration', resolveInstanceVariables).resolveAst(node);
 }
 
+const classMethod = Symbol('classMethod');
+
 function resolveInstanceVariables(node, key) {
-  const staticPropMap: PropMap = new Map();
-  const instancePropMap: PropMap = new Map();
-  let propMap: PropMap;
+  const staticPropSymbolMap: PropSymbolMap = new Map();
+  const instancePropSymbolMap: PropSymbolMap = new Map();
+  let propMap: PropSymbolMap;
   const tree = node[key];
+  checkMethods(tree, staticPropSymbolMap, instancePropSymbolMap);
   new Ast()
     .set('ClassMethod', (node, key, ast) => {
-      propMap = node[key].static ? staticPropMap : instancePropMap;
+      propMap = node[key].static ? staticPropSymbolMap : instancePropSymbolMap;
       return ast.super(node, key);
     })
     .set('AssignmentExpression', (node, key, ast) => {
@@ -32,29 +35,32 @@ function resolveInstanceVariables(node, key) {
     })
     .resolveAst(tree);
 
-  // remove getter/setter
-  new Ast()
-    .set('ClassMethod', (node, key) => {
-      const tree = node[key];
-      if (tree.kind !== 'get' && tree.kind !== 'set') {
-        return false;
-      }
-      propMap = tree.static ? staticPropMap : instancePropMap;
-      propMap.delete(tree.key.name);
-      return true;
-    })
-    .resolveAst(tree);
-
   tree.body = tree.body || { type: 'ClassBody', body: [] };
-  assignPropMap(tree, instancePropMap, false);
-  assignPropMap(tree, staticPropMap, true);
+  assignPropMap(tree, instancePropSymbolMap, false);
+  assignPropMap(tree, staticPropSymbolMap, true);
   return true;
 }
 
-function assignPropMap(node, propMap: PropMap, staticProperty: boolean) {
-  const props: any[] = Array.from(propMap).map(([name, set]) => {
+function checkMethods(tree, staticPropSymbolMap: PropSymbolMap, instancePropSymbolMap: PropSymbolMap) {
+  let propMap: PropSymbolMap;
+  new Ast()
+    .set('ClassMethod', (node, key) => {
+      const tree = node[key];
+      propMap = tree.static ? staticPropSymbolMap : instancePropSymbolMap;
+      propMap.set(tree.key.name, classMethod);
+      return true;
+    })
+    .resolveAst(tree);
+}
+
+function assignPropMap(node, propMap: PropSymbolMap, staticProperty: boolean) {
+  const props: any[] = [];
+  for (const [name, set] of propMap.entries()) {
+    if (!(set instanceof Set)) {
+      continue;
+    }
     const typeAnnotation = getTypeAnnotation(set);
-    return {
+    props.push({
       type: 'ClassProperty',
       key: {
         type: 'Identifier',
@@ -68,7 +74,7 @@ function assignPropMap(node, propMap: PropMap, staticProperty: boolean) {
         type: 'TypeAnnotation',
         typeAnnotation
       }
-    };
-  });
+    });
+  }
   node.body.body.unshift(...props);
 }
