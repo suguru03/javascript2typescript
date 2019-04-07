@@ -1,14 +1,5 @@
-class Test {
-  constructor() {
-    this.a = 1;
-    const a = this.a;
-  }
-  get() {
-    return this.a;
-  }
-}
-
 class GetterSetter {
+  val: number | any;
   constructor() {
     this.val = 0;
   }
@@ -17,7 +8,7 @@ class GetterSetter {
     return this.val;
   }
 
-  set num(val) {
+  set num(val: any) {
     this.val = val;
   }
 }
