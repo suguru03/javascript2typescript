@@ -3,7 +3,11 @@ import * as path from 'path';
 import * as assert from 'assert';
 
 import { Agent } from 'vm-agent';
+import * as minimist from 'minimist';
 import * as parallel from 'mocha.parallel';
+
+const { target } = minimist(process.argv.slice(2));
+const re = target ? new RegExp(target) : /.*/;
 
 const bindir = path.resolve(__dirname, '..', 'dist/bin');
 const binfile = fs
@@ -20,7 +24,9 @@ for (const dirname of fs.readdirSync(__dirname)) {
   parallel(dirname, () => {
     for (const testdir of fs.readdirSync(dirpath)) {
       const testpath = path.join(dirpath, testdir);
-      it(testdir, async () => validate(testpath));
+      if (re.test(testdir)) {
+        it(testdir, async () => validate(testpath));
+      }
     }
   });
 }
