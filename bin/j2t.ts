@@ -36,6 +36,7 @@ Aigle.eachLimit(files, limit, async file => {
     throw stderr;
   }
   if (!write) {
+    console.log(`Finished! ${file}`);
     return;
   }
   const filepath = file.replace(/.js$/, '.ts');
@@ -45,5 +46,5 @@ Aigle.eachLimit(files, limit, async file => {
   if (rm) {
     fs.unlinkSync(file);
   }
-  console.log(`Converted... ${filepath}`);
+  console.log(`Converted! ${filepath}`);
 });
