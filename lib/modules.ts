@@ -34,6 +34,10 @@ function resolveImport(node) {
         if (!res) {
           return false;
         }
+        const [source] = node[key].expression.arguments;
+        if (isJson(source)) {
+          return false;
+        }
         /*
          * require('fs');
          * ↓
@@ -62,13 +66,17 @@ function resolveImport(node) {
          * import { resolve } from 'path';
          */
         if (declarator.id.type === 'ObjectPattern') {
+          const [source] = declarator.init.arguments;
+          if (isJson(source)) {
+            return false;
+          }
           body.splice(idx, 1, {
             type: 'ImportDeclaration',
             specifiers: declarator.id.properties.map(prop => ({
               type: 'ImportSpecifier',
               imported: prop
             })),
-            source: declarator.init.arguments[0]
+            source
           });
           return true;
         }
@@ -80,6 +88,10 @@ function resolveImport(node) {
          * import { join as join2 } from 'fs';
          */
         if (declarator.init.property) {
+          const [source] = declarator.init.object.arguments;
+          if (isJson(source)) {
+            return false;
+          }
           body.splice(idx, 1, {
             type: 'ImportDeclaration',
             specifiers: [
@@ -89,12 +101,15 @@ function resolveImport(node) {
                 local: declarator.id
               }
             ],
-            source: declarator.init.object.arguments[0]
+            source
           });
           return true;
         }
 
         const [source] = declarator.init.arguments;
+        if (isJson(source)) {
+          return false;
+        }
         const type = defaultList.find(re => re.test(source.value))
           ? 'ImportDefaultSpecifier'
           : 'ImportNamespaceSpecifier';
@@ -130,6 +145,10 @@ function resolveImport(node) {
       .set('CallExpression', (node, key, ast) => get(node[key], ['callee', 'name']) === 'require')
       .resolveAst(body, idx);
   }
+}
+
+function isJson(tree) {
+  return /.json$/.test(tree.value);
 }
 
 function resolveExportDefault(node) {
