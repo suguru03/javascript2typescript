@@ -1,19 +1,16 @@
 # javascript2typescript
 
-The library helps to convert JavaScript to TypeScript.
+The library is a helper to convert JavaScript to TypeScript. 
 
 ## Features
 - define class/instance properties
 - convert require/exports to import/export
 - migrate jsdoc into type definition
 
-
 ## How to run
 
 ```js
 $ npx javascript2typescript <dirname or filename>
-$ npx javascript2typescript <dirname or filename> --write // create typescript files
-$ npx javascript2typescript <dirname or filename> --write --rm // remove javascript files
 
 // or
 
@@ -27,3 +24,10 @@ $ yarn j2t <dirname or filename>
 ```
 
 
+## Options
+
+|command|description|
+|---|---|
+|--write|create TypeScript files|
+|--rm|remove JavaScript files|
+|-d|convert `export = xxx` to `export default xxx`|
