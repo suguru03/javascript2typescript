@@ -1,3 +1,8 @@
+function simple(num, str = 'str') {
+  num = 1;
+  return { num };
+}
+
 /**
  * @param {string|number} key
  * @param {string} num
@@ -5,15 +10,6 @@
  */
 function func(key, num = 1, bool = false, unknown) {
   return { key, num, bool, unknown };
-}
-
-/**
- * @param {number} [num]
- * @param {string} [str]
- * @returns {Object}
- */
-function optional(num, str = 'str') {
-  return { num };
 }
 
 class Test {

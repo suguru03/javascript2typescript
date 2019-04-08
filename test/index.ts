@@ -24,7 +24,7 @@ for (const dirname of fs.readdirSync(__dirname)) {
   parallel(dirname, () => {
     for (const testdir of fs.readdirSync(dirpath)) {
       const testpath = path.join(dirpath, testdir);
-      if (re.test(testdir)) {
+      if (re.test(dirname) || re.test(testdir)) {
         it(testdir, async () => validate(testpath));
       }
     }

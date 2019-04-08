@@ -1,7 +1,6 @@
 import { Ast } from 'prettier-hook';
 
 import { Type, PropMap, getTypeAnnotation, setTypeToPropMap } from './types';
-import { types } from 'util';
 
 export function resolve(node) {
   resolveJsDoc(node);
@@ -19,6 +18,7 @@ function resolveJsDoc(node) {
     .set('ClassMethod', resolveArguments)
     .resolveAst(node);
 }
+type OptionalMap = Map<string, boolean>;
 
 function resolveArguments(node, key) {
   const { leadingComments = [], params } = node[key];
@@ -26,8 +26,9 @@ function resolveArguments(node, key) {
     return false;
   }
   const paramMap: PropMap = new Map();
-  const optionalMap: Map<string, boolean> = new Map();
+  const optionalMap: OptionalMap = new Map();
   if (leadingComments.length !== 0) {
+    // TODO: find a better js doc parser
     const [{ value }] = leadingComments;
     value
       .split(/\n/g)
@@ -47,15 +48,14 @@ function resolveArguments(node, key) {
         }
       });
   }
+  new Ast()
+    .set('AssignmentExpression', (tree, key) => resolveAssignmentExpression(tree[key], paramMap, optionalMap))
+    .resolveAst(node, key);
   for (let tree of params) {
     switch (tree.type) {
       case 'AssignmentPattern':
-        const { left, right } = tree;
-        setTypeToPropMap(left.name, paramMap, tree.right.type);
-        if (right) {
-          optionalMap.delete(left.name);
-        }
-        tree = left;
+        resolveAssignmentExpression(tree, paramMap, optionalMap);
+        tree = tree.left;
       case 'Identifier':
         const { name } = tree;
         const typeSet = paramMap.get(name);
@@ -68,5 +68,12 @@ function resolveArguments(node, key) {
         break;
     }
   }
+  return true;
+}
+
+function resolveAssignmentExpression(node, paramMap: PropMap, optionalMap: OptionalMap) {
+  const { left, right } = node;
+  setTypeToPropMap(left.name, paramMap, right.type);
+  optionalMap.delete(left.name);
   return true;
 }
