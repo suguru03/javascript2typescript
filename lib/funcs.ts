@@ -49,13 +49,17 @@ function resolveArguments(node, key) {
       });
   }
   new Ast()
-    .set('AssignmentExpression', (tree, key) => resolveAssignmentExpression(tree[key], paramMap, optionalMap))
+    .set('AssignmentExpression', (tree, key) => {
+      const { left, right } = tree[key];
+      return resolveAssignmentExpression(left, right, paramMap, optionalMap);
+    })
     .resolveAst(node, key);
   for (let tree of params) {
     switch (tree.type) {
       case 'AssignmentPattern':
-        resolveAssignmentExpression(tree, paramMap, optionalMap);
-        tree = tree.left;
+        const { left, right } = tree;
+        resolveAssignmentExpression(left, right, paramMap, optionalMap);
+        tree = left;
       case 'Identifier':
         const { name } = tree;
         const typeSet = paramMap.get(name);
@@ -71,8 +75,10 @@ function resolveArguments(node, key) {
   return true;
 }
 
-function resolveAssignmentExpression(node, paramMap: PropMap, optionalMap: OptionalMap) {
-  const { left, right } = node;
+function resolveAssignmentExpression(left, right, paramMap: PropMap, optionalMap: OptionalMap) {
+  if (right.type === 'LogicalExpression') {
+    return resolveAssignmentExpression(left, right.right, paramMap, optionalMap);
+  }
   setTypeToPropMap(left.name, paramMap, right.type);
   optionalMap.delete(left.name);
   return true;
