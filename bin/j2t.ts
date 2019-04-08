@@ -23,7 +23,8 @@ if (!hookpath) {
 }
 
 const arg = `${args._}`;
-const files: string[] = glob.sync(/.js$/.test(arg) ? arg : `${arg}/**`).filter(file => /.js$/.test(file));
+const re = /.js$/;
+const files: string[] = glob.sync(re.test(arg) ? arg : `${arg}/**`).filter(file => re.test(file));
 
 Aigle.eachLimit(files, limit, async file => {
   console.log(`Converting... ${file}`);

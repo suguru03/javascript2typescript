@@ -10,4 +10,3 @@ function parse(ast) {
 }
 
 hooks.babylon.addHook(parse);
-hooks.typescript.addHook(parse);

@@ -8,8 +8,7 @@ export function resolve(node) {
 }
 const defaultList = (process.env.J2T_DEFAULT_EXPORT || '').split(',').map(str => new RegExp(str));
 
-// TODO: for now, it only supports top level imports, not support dynamic imports
-// TODO: module.export => export = xxx
+// it only supports top level imports, not support dynamic imports
 function resolveImport(node) {
   const body = get(node, ['program', 'body']);
   if (!body) {
@@ -104,7 +103,7 @@ function resolveImport(node) {
          * cosnt test = require('./path');
          * ↓
          * import * as test from 'path';
-         * import test from './path';
+         * import * as test from './path';
          *
          * with `-d` config,
          * ex) ./bin/j2t.js example -d 'path';
@@ -145,13 +144,17 @@ function resolveExportDefault(node) {
         /*
          * module.exports = {};
          * ↓
-         * export default {};
+         * export = {};
          */
         case map.default:
           node.splice(key, 1, {
-            type: 'ExportDefaultDeclaration',
-            declaration: tree.expression.right
+            type: 'TSExportAssignment',
+            expression: tree.expression.right
           });
+          // node.splice(key, 1, {
+          //   type: 'ExportDefaultDeclaration',
+          //   declaration: tree.expression.right
+          // });
           break;
         case map.named:
           /*
