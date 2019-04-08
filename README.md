@@ -12,6 +12,8 @@ The library helps to convert JavaScript to TypeScript.
 
 ```js
 $ npx javascript2typescript <dirname or filename>
+$ npx javascript2typescript <dirname or filename> --write // create typescript files
+$ npx javascript2typescript <dirname or filename> --write --rm // remove javascript files
 
 // or
 
