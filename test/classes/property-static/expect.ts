@@ -1,4 +1,6 @@
 class Test {
+  static a: number;
+  a: number;
   constructor() {
     this.a = 1;
     const a = this.a;
