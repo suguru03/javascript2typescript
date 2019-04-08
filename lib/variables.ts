@@ -11,6 +11,10 @@ function resolveInitVariables(node) {
       const tree = node[key];
       switch (get(tree, ['init', 'type'])) {
         case 'ArrayExpression':
+          // if elements exist, use type inference
+          if (get(tree, ['init', 'elements', 'length'])) {
+            return false;
+          }
           tree.id.typeAnnotation = {
             type: 'TypeAnnotation',
             typeAnnotation: {
