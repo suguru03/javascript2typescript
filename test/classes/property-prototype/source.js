@@ -5,5 +5,5 @@ class Test {
 }
 
 Test.prototype.test = function() {
-  return this.b;
+  return this.a;
 };

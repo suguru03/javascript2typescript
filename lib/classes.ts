@@ -13,7 +13,7 @@ export function resolve(node) {
       instanceMap.set(name, new Map());
       return ast.super(node, key);
     })
-    .set('AssignmentExpression', (node, key) => checkAssignmentStaticVariables(node, key, staticMap))
+    .set('AssignmentExpression', (node, key) => checkAssignmentVariables(node, key, staticMap, instanceMap))
     .resolveAst(node);
 
   // define class properties
@@ -64,12 +64,18 @@ function checkMethods(tree, staticPropMap: PropSymbolMap, instancePropMap: PropS
     .resolveAst(tree);
 }
 
-function checkAssignmentStaticVariables(node, key, staticPropMap: Map<string, PropSymbolMap>) {
+function checkAssignmentVariables(
+  node,
+  key,
+  staticPropMap: Map<string, PropSymbolMap>,
+  instancePropMap: Map<string, PropSymbolMap>
+) {
   return new Ast()
     .set('AssignmentExpression', (tree, key) => {
-      const { left, right } = tree[key];
-      const className = get(left, ['object', 'name']);
-      const propMap = staticPropMap.get(className);
+      let { left, right } = tree[key];
+      const prototype = get(left, ['object', 'property', 'name']) === 'prototype';
+      const className = get(left, prototype ? ['object', 'object', 'name'] : ['object', 'name']);
+      const propMap = prototype ? instancePropMap.get(className) : staticPropMap.get(className);
       if (!propMap) {
         return false;
       }
@@ -80,7 +86,7 @@ function checkAssignmentStaticVariables(node, key, staticPropMap: Map<string, Pr
 }
 
 function getAssignmentName(left) {
-  const name = get(left, ['object', 'property', 'name']) || get(left, ['property', 'name']);
+  const name = get(left, ['property', 'name']) || get(left, ['object', 'property', 'name']);
   if (!name) {
     console.error(JSON.stringify(left, null, 4));
     throw new Error('name not found');
