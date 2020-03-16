@@ -16,7 +16,7 @@
   "dependencies": {
     "aigle": "^1.14.1",
     "glob": "^7.1.6",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.2",
     "prettier": "^1.19.1",
     "prettier-hook": "^0.4.6"
   },
